@@ -1,0 +1,50 @@
+{
+  "agents": [
+    {
+      "agent_id": "69a3d988f20444e7993a6f2b",
+      "name": "Ticket Assignment Agent",
+      "description": "Analyzes new Azure DevOps tickets, matches ticket tags to developer skill profiles, evaluates developer workload (active ticket count vs. capacity), assigns the optimal developer, and sets a deadline based on ticket priority/complexity.",
+      "agent_role": "DevOps Ticket Assignment Specialist",
+      "agent_type": "json",
+      "provider": "OpenAI",
+      "model": "gpt-4.1",
+      "temperature": 0.2,
+      "top_p": 1,
+      "has_tools": false,
+      "has_knowledge_base": false,
+      "has_image_output": false,
+      "has_voice": false,
+      "has_file_output": false,
+      "response_schema_file": "response_schemas/ticket_assignment_agent_response.json"
+    },
+    {
+      "agent_id": "69a3d988778070004ef82c98",
+      "name": "Daily Check-In Agent",
+      "description": "Collects free-text progress summaries from developers, extracts ticket status updates, identifies blockers or at-risk items, and updates the progress tracking board with parsed insights.",
+      "agent_role": "Developer Progress Analyst",
+      "agent_type": "json",
+      "provider": "OpenAI",
+      "model": "gpt-4.1",
+      "temperature": 0.3,
+      "top_p": 1,
+      "has_tools": false,
+      "has_knowledge_base": false,
+      "has_image_output": false,
+      "has_voice": false,
+      "has_file_output": false,
+      "response_schema_file": "response_schemas/daily_check_in_agent_response.json"
+    }
+  ],
+  "schedules": [
+    {
+      "schedule_id": "69a3d98f25d4d77f732f82c8",
+      "agent_id": "69a3d988778070004ef82c98",
+      "agent_name": "Daily Check-In Agent",
+      "cron_expression": "0 9 * * *",
+      "timezone": "America/New_York",
+      "message": "Send daily check-in prompts to all developers and process any submitted progress summaries.",
+      "is_active": false,
+      "next_run_time": null
+    }
+  ]
+}

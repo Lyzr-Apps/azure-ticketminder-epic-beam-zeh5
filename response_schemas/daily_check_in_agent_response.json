@@ -1,0 +1,58 @@
+{
+  "agent_name": "Daily Check-In Agent",
+  "agent_id": "69a3d988778070004ef82c98",
+  "description": "Collects free-text progress summaries from developers, extracts ticket status updates, identifies blockers or at-risk items, and updates the progress tracking board with parsed insights.",
+  "agent_type": "json",
+  "accessor": "result",
+  "auto_generated": true,
+  "response_schema": {
+    "developerName": "string",
+    "date": "string",
+    "ticketUpdates": [
+      {
+        "ticketId": "string",
+        "title": "string",
+        "status": "string",
+        "percentComplete": "number",
+        "notes": "string"
+      }
+    ],
+    "blockers": [
+      {
+        "description": "string",
+        "severity": "string",
+        "relatedTicket": "string"
+      }
+    ],
+    "accomplishments": [
+      "string"
+    ],
+    "overallHealth": "string",
+    "parsedSummary": "string"
+  },
+  "example_response": {
+    "developerName": "sample string",
+    "date": "sample string",
+    "ticketUpdates": [
+      {
+        "ticketId": "sample string",
+        "title": "sample string",
+        "status": "sample string",
+        "percentComplete": 0,
+        "notes": "sample string"
+      }
+    ],
+    "blockers": [
+      {
+        "description": "sample string",
+        "severity": "sample string",
+        "relatedTicket": "sample string"
+      }
+    ],
+    "accomplishments": [
+      "sample string"
+    ],
+    "overallHealth": "sample string",
+    "parsedSummary": "sample string"
+  }
+}

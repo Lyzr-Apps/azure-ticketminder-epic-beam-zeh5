@@ -1,0 +1,52 @@
+{
+  "agent_name": "Ticket Assignment Agent",
+  "agent_id": "69a3d988f20444e7993a6f2b",
+  "description": "Analyzes new Azure DevOps tickets, matches ticket tags to developer skill profiles, evaluates developer workload (active ticket count vs. capacity), assigns the optimal developer, and sets a deadline based on ticket priority/complexity.",
+  "agent_type": "json",
+  "accessor": "result",
+  "auto_generated": true,
+  "response_schema": {
+    "assignments": [
+      {
+        "ticketId": "string",
+        "title": "string",
+        "assignedTo": "string",
+        "assignedEmail": "string",
+        "matchedTags": [
+          "string"
+        ],
+        "deadline": "string",
+        "priority": "string",
+        "reasoning": "string"
+      }
+    ],
+    "summary": {
+      "totalProcessed": "number",
+      "totalAssigned": "number",
+      "unassignable": "number",
+      "notes": "string"
+    }
+  },
+  "example_response": {
+    "assignments": [
+      {
+        "ticketId": "sample string",
+        "title": "sample string",
+        "assignedTo": "sample string",
+        "assignedEmail": "sample string",
+        "matchedTags": [
+          "sample string"
+        ],
+        "deadline": "sample string",
+        "priority": "sample string",
+        "reasoning": "sample string"
+      }
+    ],
+    "summary": {
+      "totalProcessed": 0,
+      "totalAssigned": 0,
+      "unassignable": 0,
+      "notes": "sample string"
+    }
+  }
+}

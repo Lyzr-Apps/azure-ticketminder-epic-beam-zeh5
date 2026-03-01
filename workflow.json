@@ -1,0 +1,17 @@
+{
+  "nodes": [
+    {"id": "input_node", "type": "Input", "label": "User Input", "nodeCategory": "input"},
+    {"id": "ticket_assignment_agent", "type": "Agent", "label": "Ticket Assignment Agent", "nodeCategory": "agent"},
+    {"id": "daily_checkin_agent", "type": "Agent", "label": "Daily Check-In Agent", "nodeCategory": "agent"},
+    {"id": "scheduler_node", "type": "Scheduler", "label": "Scheduled: Daily at 9:00 AM ET", "nodeCategory": "conditional"},
+    {"id": "output_ticket", "type": "Output", "label": "Assignment Results", "nodeCategory": "end"},
+    {"id": "output_checkin", "type": "Output", "label": "Check-In Insights", "nodeCategory": "end"}
+  ],
+  "edges": [
+    {"source": "input_node", "target": "ticket_assignment_agent"},
+    {"source": "input_node", "target": "daily_checkin_agent"},
+    {"source": "ticket_assignment_agent", "target": "output_ticket"},
+    {"source": "daily_checkin_agent", "target": "output_checkin"},
+    {"source": "scheduler_node", "target": "daily_checkin_agent"}
+  ]
+}
