@@ -1,8 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { FiAlertTriangle, FiClock, FiCheckCircle, FiLoader, FiArrowUp, FiArrowDown, FiActivity, FiPlus, FiTrash2, FiX } from 'react-icons/fi'
-import { Badge } from '@/components/ui/badge'
+import { FiAlertTriangle, FiClock, FiCheckCircle, FiLoader, FiArrowUp, FiArrowDown, FiActivity, FiPlus, FiX } from 'react-icons/fi'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 

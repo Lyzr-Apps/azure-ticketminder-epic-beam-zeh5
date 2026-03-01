@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { FiPlus, FiTrash2, FiEdit2, FiX, FiCheck, FiUser, FiPause, FiPlay } from 'react-icons/fi'
+import { FiPlus, FiTrash2, FiEdit2, FiX, FiCheck, FiUser } from 'react-icons/fi'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'

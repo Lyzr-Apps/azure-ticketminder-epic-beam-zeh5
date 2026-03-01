@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { FiSend, FiLoader, FiCalendar, FiAlertTriangle, FiCheckCircle, FiClock, FiPlay, FiPause } from 'react-icons/fi'
+import { FiSend, FiLoader, FiCalendar, FiAlertTriangle, FiCheckCircle } from 'react-icons/fi'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { ScrollArea } from '@/components/ui/scroll-area'

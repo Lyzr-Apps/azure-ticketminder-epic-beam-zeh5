@@ -143,6 +143,7 @@ class ErrorBoundary extends React.Component<
 
 // --- Main Page ---
 export default function Page() {
+  const [mounted, setMounted] = useState(false)
   const [activeView, setActiveView] = useState('dashboard')
   const [sampleMode, setSampleMode] = useState(false)
   const [developers, setDevelopers] = useState<Developer[]>([])
@@ -163,14 +164,15 @@ export default function Page() {
     setAssignments(loadState<Assignment[]>('dtc_assignments', []))
     setCheckIns(loadState<CheckIn[]>('dtc_checkins', []))
     setDeadlineRules(loadState<DeadlineRule[]>('dtc_deadline_rules', DEFAULT_DEADLINE_RULES))
+    setMounted(true)
   }, [])
 
-  // Persist to localStorage
-  useEffect(() => { saveState('dtc_developers', developers) }, [developers])
-  useEffect(() => { saveState('dtc_tickets', tickets) }, [tickets])
-  useEffect(() => { saveState('dtc_assignments', assignments) }, [assignments])
-  useEffect(() => { saveState('dtc_checkins', checkIns) }, [checkIns])
-  useEffect(() => { saveState('dtc_deadline_rules', deadlineRules) }, [deadlineRules])
+  // Persist to localStorage (only after mount to avoid overwriting with empty arrays)
+  useEffect(() => { if (mounted) saveState('dtc_developers', developers) }, [developers, mounted])
+  useEffect(() => { if (mounted) saveState('dtc_tickets', tickets) }, [tickets, mounted])
+  useEffect(() => { if (mounted) saveState('dtc_assignments', assignments) }, [assignments, mounted])
+  useEffect(() => { if (mounted) saveState('dtc_checkins', checkIns) }, [checkIns, mounted])
+  useEffect(() => { if (mounted) saveState('dtc_deadline_rules', deadlineRules) }, [deadlineRules, mounted])
 
   // Derive display data based on sample mode
   const displayDevelopers = sampleMode ? SAMPLE_DEVELOPERS : developers
@@ -294,6 +296,17 @@ export default function Page() {
 
   const handleUpdateDeadlineRules = (rules: DeadlineRule[]) => {
     setDeadlineRules(rules)
+  }
+
+  if (!mounted) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'hsl(220 16% 13%)', color: 'hsl(219 28% 88%)' }}>
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin mx-auto mb-3" style={{ borderColor: 'hsl(213 32% 52%)', borderTopColor: 'transparent' }} />
+          <p className="text-sm font-sans" style={{ color: 'hsl(219 14% 65%)' }}>Loading...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
