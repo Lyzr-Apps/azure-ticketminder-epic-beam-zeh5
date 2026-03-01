@@ -4,8 +4,46 @@ import React, { useState, useEffect } from 'react'
 import { callAIAgent } from '@/lib/aiAgent'
 import parseLLMJson from '@/lib/jsonParser'
 import { FiGrid, FiCheckCircle, FiSettings, FiTerminal, FiAlertTriangle, FiClock, FiLoader, FiArrowUp, FiArrowDown, FiActivity, FiPlus, FiX, FiSend, FiCalendar, FiUser, FiTrash2, FiEdit2, FiCheck } from 'react-icons/fi'
-import { getSchedule, getScheduleLogs, pauseSchedule, resumeSchedule, cronToHuman } from '@/lib/scheduler'
+import { cronToHuman } from '@/lib/scheduler'
 import type { Schedule, ExecutionLog } from '@/lib/scheduler'
+
+// ─── Safe scheduler helpers (bypass fetchWrapper to avoid 404 page-takeover) ──
+async function safeGetSchedule(id: string): Promise<{ success: boolean; schedule?: Schedule }> {
+  try {
+    const res = await fetch(`/api/scheduler?action=get&scheduleId=${id}`)
+    if (!res.ok) return { success: false }
+    const data = await res.json()
+    if (!data.success) return { success: false }
+    const { success: _, error: __, details: ___, ...schedule } = data
+    return { success: true, schedule: schedule as unknown as Schedule }
+  } catch { return { success: false } }
+}
+async function safeGetScheduleLogs(id: string, opts?: { limit?: number }): Promise<{ success: boolean; executions: ExecutionLog[] }> {
+  try {
+    const qs = new URLSearchParams({ action: 'logs', scheduleId: id })
+    if (opts?.limit) qs.set('limit', String(opts.limit))
+    const res = await fetch(`/api/scheduler?${qs}`)
+    if (!res.ok) return { success: false, executions: [] }
+    const data = await res.json()
+    return { success: data.success, executions: Array.isArray(data.executions) ? data.executions : [] }
+  } catch { return { success: false, executions: [] } }
+}
+async function safePauseSchedule(id: string): Promise<{ success: boolean }> {
+  try {
+    const res = await fetch('/api/scheduler', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'pause', scheduleId: id }) })
+    if (!res.ok) return { success: false }
+    const data = await res.json()
+    return { success: data.success !== false }
+  } catch { return { success: false } }
+}
+async function safeResumeSchedule(id: string): Promise<{ success: boolean }> {
+  try {
+    const res = await fetch('/api/scheduler', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'resume', scheduleId: id }) })
+    if (!res.ok) return { success: false }
+    const data = await res.json()
+    return { success: data.success !== false }
+  } catch { return { success: false } }
+}
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 interface Developer { name: string; email: string; skillTags: string[]; maxCapacity: number; activeTickets: number }
@@ -341,16 +379,16 @@ function CheckInsView({ developers, checkIns, loading, statusMessage, onSubmitCh
 
   const loadSched = async () => {
     try {
-      const s = await getSchedule(SCHEDULE_ID); if (s.success && s.schedule) setSchedule(s.schedule)
-      const l = await getScheduleLogs(SCHEDULE_ID, { limit: 5 }); if (l.success && Array.isArray(l.executions)) setLogs(l.executions)
+      const s = await safeGetSchedule(SCHEDULE_ID); if (s.success && s.schedule) setSchedule(s.schedule)
+      const l = await safeGetScheduleLogs(SCHEDULE_ID, { limit: 5 }); if (l.success && Array.isArray(l.executions)) setLogs(l.executions)
     } catch {}
   }
 
   const toggleSched = async () => {
     if (!schedule) return; setSchedLoading(true)
     try {
-      if (schedule.is_active) { const r = await pauseSchedule(SCHEDULE_ID); if (r.success) setSchedule(p => p ? { ...p, is_active: false } : null) }
-      else { const r = await resumeSchedule(SCHEDULE_ID); if (r.success) setSchedule(p => p ? { ...p, is_active: true } : null) }
+      if (schedule.is_active) { const r = await safePauseSchedule(SCHEDULE_ID); if (r.success) setSchedule(p => p ? { ...p, is_active: false } : null) }
+      else { const r = await safeResumeSchedule(SCHEDULE_ID); if (r.success) setSchedule(p => p ? { ...p, is_active: true } : null) }
       await loadSched()
     } catch {}
     setSchedLoading(false)
@@ -449,16 +487,16 @@ function SettingsView({ developers, deadlineRules, onAddDeveloper, onRemoveDevel
 
   const loadSched = async () => {
     try {
-      const s = await getSchedule(SCHEDULE_ID); if (s.success && s.schedule) setSchedule(s.schedule)
-      const l = await getScheduleLogs(SCHEDULE_ID, { limit: 5 }); if (l.success && Array.isArray(l.executions)) setLogs(l.executions)
+      const s = await safeGetSchedule(SCHEDULE_ID); if (s.success && s.schedule) setSchedule(s.schedule)
+      const l = await safeGetScheduleLogs(SCHEDULE_ID, { limit: 5 }); if (l.success && Array.isArray(l.executions)) setLogs(l.executions)
     } catch {}
   }
 
   const toggleSched = async () => {
     if (!schedule) return; setSchedLoading(true)
     try {
-      if (schedule.is_active) { const r = await pauseSchedule(SCHEDULE_ID); if (r.success) setSchedule(p => p ? { ...p, is_active: false } : null) }
-      else { const r = await resumeSchedule(SCHEDULE_ID); if (r.success) setSchedule(p => p ? { ...p, is_active: true } : null) }
+      if (schedule.is_active) { const r = await safePauseSchedule(SCHEDULE_ID); if (r.success) setSchedule(p => p ? { ...p, is_active: false } : null) }
+      else { const r = await safeResumeSchedule(SCHEDULE_ID); if (r.success) setSchedule(p => p ? { ...p, is_active: true } : null) }
       await loadSched()
     } catch {}
     setSchedLoading(false)
